@@ -164,7 +164,10 @@ void loopId() {
   if(timeAtual - ultimoTime > 250000){
     ultimoTime = timeAtual;
   }
-  if(!gpio_get(botao)){
+
+  bool estadoBotao = gpio_get(botao);
+  
+  if(!estadoBotao){
     if(botao == botaoA){
       id++;
       loopId();
