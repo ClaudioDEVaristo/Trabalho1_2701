@@ -24,6 +24,25 @@ int static volatile id = 0;
 //Pino do RGB vermelho
 #define led_vermelho 13
 
+void setup(){
+
+  // Inicialização da matriz de LED
+  gpio_init(OUT_PIN);
+  gpio_set_dir(OUT_PIN, GPIO_OUT);
+
+  // Inicialização do led vermelho
+  gpio_init(led_vermelho);
+  gpio_set_dir(led_vermelho, GPIO_OUT);
+
+  // Inicialização dos botões A e B e ativação do pull up
+  gpio_init(botaoA);
+  gpio_set_dir(botaoA, GPIO_IN);
+  gpio_pull_up(botaoA);
+  gpio_init(botaoB);
+  gpio_set_dir(botaoB, GPIO_IN);
+  gpio_pull_up(botaoB);
+}
+
 //Função para piscar o led vermelho 5x por segundo
 int piscaLed(int led, int timer){
   gpio_put(led, 1);
@@ -159,11 +178,11 @@ void loopId() {
 //rotina da interrupção
   void callback_button(uint botao, uint32_t events)
 {
-  uint timeAtual = to_ms_since_boot(get_absolute_time()); // Tempo em milissegundos 
+  uint timeAtual = to_us_since_boot(get_absolute_time()); // Tempo em milissegundos 
   //250 ms para evitar ação dupla do botão
   if(timeAtual - ultimoTime > 250000){
     ultimoTime = timeAtual;
-  }
+    printf("Contador: %d\n", contador);
 
   bool estadoBotao = gpio_get(botao);
   
@@ -171,38 +190,23 @@ void loopId() {
     if(botao == botaoA){
       id++;
       loopId();
+      printf("Valor do id: %d\n", id);
       desenho(numeros[id], valorLed, pio, sm, 0.0, 0.0, 0.1); // Desenha conforme o número do id
       contador++;
+      printf("Valor do contador: %d\n", contador);
     }
     else {
         id--; 
         loopId();
+        printf("Valor do id: %d\n", id);
         desenho(numeros[id], valorLed, pio, sm, 0.0, 0.0, 0.1); // Desenha conforme o número do id
         contador++; 
+        printf("Valor do contador: %d\n", contador);
        }
+    }
   }
 
 }
-
-void setup(){
-
-    // Inicialização da matriz de LED
-    gpio_init(OUT_PIN);
-    gpio_set_dir(OUT_PIN, GPIO_OUT);
-
-    // Inicialização do led vermelho
-    gpio_init(led_vermelho);
-    gpio_set_dir(led_vermelho, GPIO_OUT);
-
-    // Inicialização dos botões A e B e ativação do pull up
-    gpio_init(botaoA);
-    gpio_set_dir(botaoA, GPIO_IN);
-    gpio_pull_up(botaoA);
-    gpio_init(botaoB);
-    gpio_set_dir(botaoB, GPIO_IN);
-    gpio_pull_up(botaoB);
-}
-
 
 int main()
 {
